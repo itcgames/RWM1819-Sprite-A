@@ -38,7 +38,7 @@ class AnimationManager {
 
     /**
      * Draws the current animation.
-     * @param {CanvasRenderingContext2D} context
+     * @param {CanvasRenderingContext2D} context this is the documents 2d context canvas
      */
     draw(context) {
         this.currentAnimation.draw(context);
@@ -53,6 +53,22 @@ class AnimationManager {
         if (this.animations.has(animName)) {
             var anim = this.animations.get(animName);
             anim.setAngle(degrees);
+        }
+        else {
+            console.log("Animation " + animName + "could not be found in the animator");
+        }
+    }
+
+    /**
+     * Allows for setting of the scale of the animation. It alters the destination rectangle making the animation bigger on the screen.
+     * @param {string} animName Name of the animation you wish to scale
+     * @param {Number} scaleX Scale factor on the width of animation (1.0 is default)
+     * @param {Number} scaleY scale factor on the height of animation (1.0 is default)
+     */
+    setScale(animName, scaleX, scaleY) {
+        if (this.animations.has(animName)) {
+            var anim = this.animations.get(animName);
+            anim.setRotation(scaleX, scaleY);
         }
         else {
             console.log("Animation " + animName + "could not be found in the animator");

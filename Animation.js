@@ -16,8 +16,7 @@ class Animation
      * @param {Number} atlasY Defines the amount of images that the texture has vertically.
      * @param {Number} atlasTotal Defines total number of images in the texture. Defaults to atlasX * atlasY. To be set ONLY if the last row of images is not the same as the others. (e.g all rows have 4 images but last has 2)
      */
-    constructor(image, sourceRect, destRect, atlasX, atlasY, atlasTotal = atlasX * atlasY)
-    {
+    constructor(image, sourceRect, destRect, atlasX, atlasY, atlasTotal = atlasX * atlasY) {
         this.image = image;
         this.atlasX = atlasX - 1; //minus so we start at 0, let user put in the number without accounting for 0
         this.atlasY = atlasY - 1;
@@ -34,15 +33,17 @@ class Animation
         this.tickCount = 0;
         this.angle = 0;
         this.currentFrame = 0;
-
+        this.scaleX = 1.0;
+        this.scaleY = 1.0;
+        //scale the rectangle to default scale
+        this.destinationCurrent = new AnimationRectangle(destRect.posX, destRect.posY, destRect.width * this.scaleX, destRect.height * this.scaleY);
     }
 
     /**
      * This function will update the animation logic
      * @param {Number} deltaTime time since last update in milliseconds.
      */
-    update(deltaTime)
-    {
+    update(deltaTime) {
         this.tickCount += deltaTime;
         this.ticksPerFrame = 1000 / this.fps;
         if (this.tickCount > this.ticksPerFrame)
@@ -75,13 +76,11 @@ class Animation
      * A setter function for the rotation of the sprite.
      * @param {Number} angle Angle of rotation in degrees
      */
-    setAngle(angle)
-    {
+    setAngle(angle) {
         this.angle = angle;
     }
 
-    getAngle()
-    {
+    getAngle() {
         return this.angle;
     }
 
@@ -99,8 +98,7 @@ class Animation
      * Function draws the animation in the defined position and rotation.
      * @param {CanvasRenderingContext2D} context this is the documents 2d context canvas
      */
-    draw(context)
-    {
+    draw(context) {
 
         context.save();
 
@@ -122,11 +120,25 @@ class Animation
             , this.source.height
             , 0
             , 0
-            , this.destination.width
-            , this.destination.height);
+            , this.destinationCurrent.width
+            , this.destinationCurrent.height);
 
 
         context.restore();
+    }
+
+    /**
+     * Scales the destination rectangle by passed in factors
+     * @param {Number} scaleX factor by which to scale the animation width (1.0 is default scale)
+     * @param {Number} scaleY factor by which to scale the animation height (1.0 is default scale)
+     */
+    scale(scaleX, scaleY) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+
+        this.destinationCurrent.width = this.destination.width * this.scaleX;
+        this.destinationCurrent.height = this.destination.height * this.scaleY;
+
     }
 
 }
