@@ -5,73 +5,73 @@
  * All animations should be updated and drawn using this class.
  */
 class AnimationManager {
-    constructor() {
-        this.animations = new Map();
-        /**
-        * @type {Animation}
-        */
-        this.currentAnimation;
-    }
-
+  constructor() {
+    this.animations = new Map();
     /**
-     * Method to add an animation to the map of animations.
-     * @param {string} animName A string representing the animation
-     * @param {Animation} animation The animation object to add to the animator
-     */
-    addAnimation(animName, animation) {
-        if (!this.animations.has(animName)) {
-            this.animations.set(animName, animation);
-            this.currentAnimation = animation;
-        }
-        else {
-            console.log("Animation " + animName + " is already in the animator");
-        }
-    }
+    * @type {Animation}
+    */
+    this.currentAnimation;
+  }
 
-    /**
-     * Updates the current animation.
-     * @param {Number} deltaTime time passed since last cycle in milliseconds
-     */
-    update(deltaTime) {
-        this.currentAnimation.update(deltaTime);
+  /**
+   * Method to add an animation to the map of animations.
+   * @param {string} animName A string representing the animation
+   * @param {Animation} animation The animation object to add to the animator
+   */
+  addAnimation(animName, animation) {
+    if (!this.animations.has(animName)) {
+      this.animations.set(animName, animation);
+      this.currentAnimation = animation;
     }
+    else {
+      console.log("Animation " + animName + " is already in the animator");
+    }
+  }
 
-    /**
-     * Draws the current animation.
-     * @param {CanvasRenderingContext2D} context this is the documents 2d context canvas
-     */
-    draw(context) {
-        this.currentAnimation.draw(context);
-    }
+  /**
+   * Updates the current animation.
+   * @param {Number} deltaTime time passed since last cycle in milliseconds
+   */
+  update(deltaTime) {
+    this.currentAnimation.update(deltaTime);
+  }
 
-    /**
-     * Allows for setting of rotation of the animation.
-     * @param {string} animName Name of the animation to rotate
-     * @param {Number} degrees angle in degrees by which to rotate the animation
-     */
-    setRotation(animName, degrees) {
-        if (this.animations.has(animName)) {
-            var anim = this.animations.get(animName);
-            anim.setAngle(degrees);
-        }
-        else {
-            console.log("Animation " + animName + "could not be found in the animator");
-        }
-    }
+  /**
+   * Draws the current animation.
+   * @param {CanvasRenderingContext2D} context
+   */
+  draw(context) {
+    this.currentAnimation.draw(context);
+  }
 
-    /**
-     * Allows for setting of the scale of the animation. It alters the destination rectangle making the animation bigger on the screen.
-     * @param {string} animName Name of the animation you wish to scale
-     * @param {Number} scaleX Scale factor on the width of animation (1.0 is default)
-     * @param {Number} scaleY scale factor on the height of animation (1.0 is default)
-     */
-    setScale(animName, scaleX, scaleY) {
-        if (this.animations.has(animName)) {
-            var anim = this.animations.get(animName);
-            anim.setRotation(scaleX, scaleY);
-        }
-        else {
-            console.log("Animation " + animName + "could not be found in the animator");
-        }
+  /**
+   * Allows for setting of rotation of the animation.
+   * @param {string} animName Name of the animation to rotate
+   * @param {Number} degrees angle in degrees by which to rotate the animation
+   */
+  setRotation(animName, degrees) {
+    if (this.animations.has(animName)) {
+      var anim = this.animations.get(animName);
+      anim.setAngle(degrees);
     }
+    else {
+      console.log("Animation " + animName + "could not be found in the animator");
+    }
+  }
+
+  /**
+   * Allows for setting of the scale of the animation. It alters the destination rectangle making the animation bigger on the screen.
+   * @param {string} animName Name of the animation you wish to scale
+   * @param {Number} scaleX Scale factor on the width of animation (1.0 is default)
+   * @param {Number} scaleY scale factor on the height of animation (1.0 is default)
+   */
+  setScale(animName, scaleX, scaleY) {
+    if (this.animations.has(animName)) {
+      var anim = this.animations.get(animName);
+      anim.scale(scaleX, scaleY);
+    }
+    else {
+      console.log("Animation " + animName + "could not be found in the animator");
+    }
+  }
 }
