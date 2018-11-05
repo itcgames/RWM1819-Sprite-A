@@ -1,4 +1,4 @@
-# Animation Manager User Guide (v 0.1.1)
+# Animation Manager User Guide (v 0.1.2)
 ## Component Overview:
 The Animation Manager Component is a simple to utilize animation component. It is used for managing animations their durations and how they are played. The Component will iterate through rectangles on an animation sheet that are defined by the programer. A simple API is used to then have the ability to alter how the animation is played (eg backwards or looped) or how long it lasts. It also gives the programmer a way to add animations into an animator which can be used to easily switch between animations. The component should be used once the programmer has their sprite atlas and **KNOWS** the source and destination rectangles to use. The correct usage of the component includes creating animations and then adding them to the animator. Component should **NOT** be used with sprite sheets that have bounding boxes of different sizes or with sprite sheets that have images not in sequential order.
 ## Features:
