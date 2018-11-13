@@ -54,9 +54,9 @@ playerAnimator.addAnimation(“Walking”, playerWalkAnim);
 ```
 *(note: If the animation already exists animation will not be added and the previously inserted one will be used)*
 
-**Step 4:** once all desired animations are inserted into the animator the animator can be used to update and draw the animation using the delta time (time between cycles in ms) and CanvasRenderingContext2D respectively.
+**Step 4:** once all desired animations are inserted into the animator the animator can be used to update and draw the animation using the delta time (time between cycles in ms) as well as the x and y positions of the object that animator is attached to and CanvasRenderingContext2D respectively.
 ```javascript
- playerAnimator.update(deltaTime); 
+ playerAnimator.update(deltaTime, xPos, yPos); 
  playerAnimator.draw(ctx);
 ```
 *(note: The current animation of the animator will be set to the LAST INSERTED animation by default. To overwrite what animation is currently being played use 
