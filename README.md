@@ -1,6 +1,6 @@
-# Animation Manager User Guide (v 0.1.2)
+﻿# Animation Manager User Guide (v 0.2.0)
 ## Component Overview:
-The Animation Manager Component is a simple to utilize animation component. It is used for managing animations their durations and how they are played. The Component will iterate through rectangles on an animation sheet that are defined by the programer. A simple API is used to then have the ability to alter how the animation is played (eg backwards or looped) or how long it lasts. It also gives the programmer a way to add animations into an animator which can be used to easily switch between animations. The component should be used once the programmer has their sprite atlas and **KNOWS** the source and destination rectangles to use. The correct usage of the component includes creating animations and then adding them to the animator. Component should **NOT** be used with sprite sheets that have bounding boxes of different sizes or with sprite sheets that have images not in sequential order.
+The Animation Manager Component is a simple to utilize animation component. It is used for managing animations their durations and how they are played. The Component will iterate through rectangles on an animation sheet that are defined by the programer. A simple API is used to then have the ability to alter how the animation is played (eg backwards or looped) or how long it lasts. It also gives the programmer a way to add animations into an animator which can be used to easily switch between animations. The component should be used once the programmer has their sprite atlas and **KNOWS** the individual frame width and height. The correct usage of the component includes creating animations and then adding them to the animator. Component should **NOT** be used with sprite sheets that have bounding boxes of different sizes or with sprite sheets that have images not in sequential order.
 ## Features:
 * **Rotating Animation** - Provide the user a way of easily rotating the animation.
 * **Loop/Reverse animation** - Lets user set specific animation to loop or play in reverse.
@@ -18,24 +18,35 @@ Sample code is provided for each step (this keyword excluded for clarity).
 ```javascript
 playerAnimator = new Animator();
 ```
-**Step 2:** Create desired animations using the animation rectangle and animation objects make sure you know the following: 
-* Amount of images horizontally in the sprite sheet
-* Amount of images vertically in the sprite sheet
-* Source rectangle and the destination rectangle sizes.
-* If the last frame of the sprite sheet is not at the end of a row provide total number of frames in the animation. Otherwise component will calculate total frames as *images horizontally * images vertically*.
+**Step 2:** Create desired animations using the animation rectangle class provided by this component and animation objects make sure you know the following: 
+* Width and height of a single frame
+* If the animation starts at the first image in the file just put in a total amount of frames, otherwise provide what position the animation begins and what position it ends.
+
+**If the animation starts at first frame simply put in total frames into constructor:**
 
 ```javascript
-  totalFrames = 49;
-  imagesHorizontally = 7;
-  imagesVertically = 8;
-  sourceRect = new AnimationRectangle(0 ,0 , 266, 162);
-  destRect = new AnimationRectangle(200, 200, 200, 120);
-  playerWalkAnim = new Animation( spriteSheet,
-                                  sourceRect,
-                                  destRect,
-                                  imagesHorizontally,
-                                  imagesVertically,
-                                  totalFrames);
+image = new Image();
+sourceWidth = 20;
+sourceHeight = 20;
+totalFrames = 50;
+	playerWalkAnim = new Animation(image,
+        sourceWidth,
+        sourceHeight,
+        totalFrames);
+```
+**Otherwise you should provide the start frame and end frame of the animation:**
+```javascript```
+Image = new Image();
+sourceWidth = 20;
+sourceHeight = 20;
+frameStart = 10;
+frameEnd = 20;
+playerWalkAnim = new Animation(image,
+        sourceWidth,
+        sourceHeight,
+        frameStart,
+        frameEnd);
+
 ```
 **Step 3:** Add animation to the animator giving it a unique name and passing in the animation created in previous step. 
 ```javascript

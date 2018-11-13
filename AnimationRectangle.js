@@ -1,7 +1,9 @@
 /**
- * Simple rectangle class which holds rectangle data to be used in conjunction with the Sprite Manager class
+ * Simple rectangle class which holds rectangle data to be 
+ * used in conjunction with the Sprite Manager class
  * @class
- * @classdesc Constructs a rectangle object that should be used wit hthe Sprite Manager class
+ * @classdesc Constructs a rectangle object that should 
+ * be used wit hthe Sprite Manager class
  */
 class AnimationRectangle {
     /**
