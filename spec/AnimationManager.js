@@ -91,9 +91,21 @@ describe('Function', function () {
       var animator = new AnimationManager();
       expect(animator.draw).to.be.a('function');
     });
-    it('draw function exists', function () {
+    it('setScale function exists', function () {
       var animator = new AnimationManager();
       expect(animator.setScale).to.be.a('function');
+    });
+    it('isPlaying function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.isPlaying).to.be.a('function');
+    });
+    it('stop function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.stop).to.be.a('function');
+    });
+    it('continue function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.continue).to.be.a('function');
     });
   });
 });
@@ -117,7 +129,7 @@ describe('Constructor', function () {
 ///  ROTATION TESTS
 /////////////////////////////////////////////////////
 describe('Rotation', function () {
-  it('should handle positive numbers', function () {
+  it('Should handle positive numbers', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -128,7 +140,7 @@ describe('Rotation', function () {
     animator.setRotation("idle", 20);
     expect(animation.getAngle()).to.equal(20);
   });
-  it('should handle negative numbers', function () {
+  it('Should handle negative numbers', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -139,7 +151,7 @@ describe('Rotation', function () {
     animator.setRotation("idle", -20);
     expect(animation.getAngle()).to.equal(-20);
   });
-  it('should handle zero', function () {
+  it('Should handle zero', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -150,7 +162,7 @@ describe('Rotation', function () {
     animator.setRotation("idle", 0);
     expect(animation.getAngle()).to.equal(0);
   });
-  it('should not alter position', function () {
+  it('Should not alter position', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -168,7 +180,7 @@ describe('Rotation', function () {
 ///  SCALING TESTS
 /////////////////////////////////////////////////////
 describe('Scaling', function () {
-  it('should not alter position', function () {
+  it('Should not alter position', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -180,7 +192,7 @@ describe('Scaling', function () {
     expect(animation.getPosition().x).to.equal(100);
     expect(animation.getPosition().y).to.equal(100);
   });
-  it('should allow scaling by positive numbers', function () {
+  it('Should allow scaling by positive numbers', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -192,7 +204,7 @@ describe('Scaling', function () {
     expect(animation.getDestRect().width).to.equal(sourceWidth * 3);
     expect(animation.getDestRect().height).to.equal(sourceHeight * 3);
   });
-  it('should allow scaling by positive numbers', function () {
+  it('Should allow scaling by positive numbers', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -204,7 +216,7 @@ describe('Scaling', function () {
     expect(animation.getDestRect().width).to.equal(sourceWidth * 3);
     expect(animation.getDestRect().height).to.equal(sourceHeight * 3);
   });
-  it('should allow scaling by negative numbers', function () {
+  it('Should allow scaling by negative numbers', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -215,5 +227,53 @@ describe('Scaling', function () {
     animator.setScale("idle", -3, -3);
     expect(animation.getDestRect().width).to.equal(-sourceWidth * 3);
     expect(animation.getDestRect().height).to.equal(-sourceHeight * 3);
+  });
+});
+
+/////////////////////////////////////////////////////
+///  STOP/PAUSE TESTS
+/////////////////////////////////////////////////////
+describe('Stop/Pause', function () {
+  it('Should set animations isPlaying to false', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.stop();
+    expect(animator.currentAnimation.isPlaying).to.equal(false);
+  });
+  it('Should not update frames after pausing', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    var previousFrame = animator.currentAnimation.indexX;
+    animator.stop();
+    animator.update(1000, 1, 1);
+    expect(animator.currentAnimation.indexX).to.equal(previousFrame);
+  });
+  it('Should play after calling continue from a pause', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    var previousFrame = animator.currentAnimation.indexX;
+    animator.stop();
+    animator.update(1000, 1, 1);
+    animator.continue();
+    animator.update(1000, 1, 1);
+    expect(animator.currentAnimation.indexX).to.not.equal(previousFrame);
   });
 });

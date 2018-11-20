@@ -14,7 +14,7 @@ class AnimationManager {
     */
     this.currentAnimation;
   }
-
+   
   /**
    * Method to add an animation to the map of animations.
    * @param {string} animName 
@@ -26,8 +26,7 @@ class AnimationManager {
     if (!this.animations.has(animName)) {
       this.animations.set(animName, animation);
       this.currentAnimation = animation;
-    }
-    else {
+    } else {
       console.log("Animation " + animName
           + " is already in the animator");
     }
@@ -61,8 +60,7 @@ class AnimationManager {
     if (this.animations.has(animName)) {
       var anim = this.animations.get(animName);
       anim.setAngle(degrees);
-    }
-    else {
+    } else {
       console.log("Animation " + animName
           + "could not be found in the animator");
     }
@@ -83,10 +81,32 @@ class AnimationManager {
     if (this.animations.has(animName)) {
       var anim = this.animations.get(animName);
       anim.scale(scaleX, scaleY);
-    }
-    else {
+    } else {
       console.log("Animation " + animName
           + "could not be found in the animator");
     }
+  }
+
+  /**
+ * Allows checking if the current animation is playing.
+ * @returns Whether the animation is playing as a boolean value.
+ */
+  isPlaying() {
+    return this.currentAnimation.isPlaying;
+  }
+
+  /**
+   * Stops the animation at current frame
+   * In order for the animation to continue playing use the continue function
+   */
+  stop() {
+    this.currentAnimation.isPlaying = false;
+  }
+
+  /**
+   * Continues the animation if it is currently paused.
+   */
+  continue() {
+    this.currentAnimation.isPlaying = true;
   }
 }

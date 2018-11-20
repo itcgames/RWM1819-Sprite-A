@@ -38,8 +38,7 @@ class Animation {
       this.initialY = 0;
       this.indexX = 0;
       this.indexY = 0;
-    }
-    else {
+    } else {
       if (frameEnd > this.atlasX) {
         this.atlasTotal = frameEnd - frameStart; //get total frames in anim
         this.initialX = (frameStart - 1) % this.atlasX;
@@ -73,6 +72,7 @@ class Animation {
         , this.destination.height * this.scaleY);
     this.offsetX = 0;
     this.offsetY = 0;
+    this.isPlaying = true;
   }
 
   /**
@@ -86,21 +86,22 @@ class Animation {
     this.destination.posY = yPos;
     this.tickCount += deltaTime;
     this.ticksPerFrame = 1000 / this.fps;
-    if (this.tickCount > this.ticksPerFrame) {
-      if (this.indexX !== this.atlasX) {
-        this.indexX++;
+    if (this.isPlaying) {
+      if (this.tickCount > this.ticksPerFrame) {
+        if (this.indexX !== this.atlasX) {
+          this.indexX++;
+        } else if (this.indexY !== this.atlasY) {
+          this.indexY++;
+          this.indexX = 0;
+        }
+        this.currentFrame++;
+        if (this.currentFrame === this.atlasTotal) {
+          this.indexX = this.initialX;
+          this.indexY = this.initialY;
+          this.currentFrame = 0;
+        }
+        this.tickCount = 0;
       }
-      else if (this.indexY !== this.atlasY) {
-        this.indexY++;
-        this.indexX = 0;
-      }
-      this.currentFrame++;
-      if (this.currentFrame === this.atlasTotal) {
-        this.indexX = this.initialX;
-        this.indexY = this.initialY;
-        this.currentFrame = 0;
-      }
-      this.tickCount = 0;
     }
     //calculates the position of the current source rectangle
     this.sx = this.indexX * this.source.width;
@@ -148,9 +149,6 @@ class Animation {
    * this is the documents 2d context canvas
    */
   draw(context) {
-
-
-
     context.save();
 
     // Next, we'll translate (move the origin) to the center
@@ -201,7 +199,5 @@ class Animation {
 
     this.destinationCurrent.width = this.destination.width * this.scaleX;
     this.destinationCurrent.height = this.destination.height * this.scaleY;
-
   }
-
 }
