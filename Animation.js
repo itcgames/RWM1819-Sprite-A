@@ -36,7 +36,7 @@ class Animation {
       this.atlasTotal = frameStart;
       this.initialX = 0;
       this.initialY = 0;
-      this.indexX = 0;
+      this.indexX = -1;
       this.indexY = 0;
     } else {
       if (frameEnd > this.atlasX) {
@@ -52,7 +52,7 @@ class Animation {
     //minus so we start at 0, let user put in the number without accounting for 0
     this.atlasX = this.atlasX - 1;
     this.atlasY = this.atlasY - 1;
-    this.source = new AnimationRectangle((this.indexX + 1) * width
+    this.source = new AnimationRectangle((this.indexX + 2) * width
       , (this.indexY + 1) * height, width, height);
     this.destination = new AnimationRectangle(100, 100, width, height);
     this.rotation = 0;
@@ -76,6 +76,9 @@ class Animation {
     this.looping = true;
     this.finishedSingleLoop = false;
     this.reverse = false;
+    //Needed for a specific case of reversing a non looping animation
+    //and wanting it to loop from the end
+    this.firstUpdate = true;
   }
 
   /**
@@ -90,7 +93,7 @@ class Animation {
     this.tickCount += deltaTime;
     this.ticksPerFrame = 1000 / this.fps;
     //Looped playing animation that is not reversing
-    if (this.isPlaying && this.isLooping && !this.reverse) {
+    if (this.isPlaying && this.looping && !this.reverse) {
       if (this.tickCount > this.ticksPerFrame) {
         if (this.indexX !== this.atlasX) {
           this.indexX++;
@@ -106,7 +109,7 @@ class Animation {
         }
         this.tickCount = 0;
       }
-    }else if (this.isPlaying && !this.isLooping && !this.finishedSingleLoop) {
+    } else if (this.isPlaying && !this.looping && !this.finishedSingleLoop && !this.reverse) {
       if (this.tickCount > this.ticksPerFrame) {
         if (this.indexX !== this.atlasX) {
           this.indexX++;
@@ -114,15 +117,13 @@ class Animation {
           this.indexY++;
           this.indexX = 0;
         }
-        if (this.currentFrame !== this.atlasTotal - 2) {
-          this.currentFrame++;
-        } else {
+        this.currentFrame++;
+        if (this.currentFrame === this.atlasTotal) {
           this.finishedSingleLoop = true;
         }
         this.tickCount = 0;
       }
-    }
-    else if (this.isPlaying && this.isLooping && this.reverse) {
+    } else if (this.isPlaying && this.looping && this.reverse) {
       if (this.tickCount > this.ticksPerFrame) {
         if (this.indexX !== 0) {
           this.indexX--;
@@ -139,10 +140,31 @@ class Animation {
         this.tickCount = 0;
       }
     }
+    else if (this.isPlaying && !this.looping && this.reverse && !this.finishedSingleLoop) {
+      if (this.tickCount > this.ticksPerFrame) {
+        if (this.firstUpdate) {
+          this.indexX = (this.atlasTotal - 1) % (this.atlasX + 1);
+          this.indexY = this.atlasY;
+          this.currentFrame = this.atlasTotal;
+        }
+        if (this.indexX !== 0) {
+          this.indexX--;
+        } else if (this.indexY !== 0) {
+          this.indexY--;
+          this.indexX = this.atlasX;
+        }
+        this.currentFrame--;
+        if (this.currentFrame === 0) {
+          this.finishedSingleLoop = true;
+        }
+        this.tickCount = 0;
+      }
+    }
     console.log("on frame" + this.currentFrame);
     //calculates the position of the current source rectangle
     this.sx = this.indexX * this.source.width;
     this.sy = this.indexY * this.source.height;
+    this.firstUpdate = false;
   }
 
   /**
@@ -154,14 +176,15 @@ class Animation {
   }
 
   /**
-   * returns current angle of rotation in degrees. 
+   * @returns {Number} 
+   * current angle of rotation in degrees. 
    */
   getAngle() {
     return this.angle;
   }
 
   /**
-   * Returns current position (origin)
+   * @returns {Object} current position (origin)
    */
   getPosition() {
     return {
@@ -217,6 +240,8 @@ class Animation {
 
   /**
    * Returns the current destination rectangle
+   * @returns {AnimationRectangle} 
+   * destination rectangle as animation rectangle object
    */
   getDestRect() {
     return this.destinationCurrent;

@@ -70,6 +70,24 @@ describe('Function', function () {
       var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
       expect(animation.scale).to.be.a('function');
     });
+    it('isLooping function exists', function () {
+      var image = new Image();
+      var sourceWidth = 100;
+      var sourceHeight = 100;
+      var totalFrames = 5;
+
+      var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+      expect(animation.isLooping).to.be.a('function');
+    });
+    it('isReversing function exists', function () {
+      var image = new Image();
+      var sourceWidth = 100;
+      var sourceHeight = 100;
+      var totalFrames = 5;
+
+      var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+      expect(animation.isReversing).to.be.a('function');
+    });
   });
   /////////////////////////////////////////////////////
   ///  ANIMATION MANAGER
@@ -106,6 +124,14 @@ describe('Function', function () {
     it('continue function exists', function () {
       var animator = new AnimationManager();
       expect(animator.continue).to.be.a('function');
+    });
+    it('isLooping function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.isLooping).to.be.a('function');
+    });
+    it('isReversing function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.isReversing).to.be.a('function');
     });
   });
 });
@@ -275,5 +301,73 @@ describe('Stop/Pause', function () {
     animator.continue();
     animator.update(1000, 1, 1);
     expect(animator.currentAnimation.indexX).to.not.equal(previousFrame);
+  });
+});
+
+/////////////////////////////////////////////////////
+///  LOOPING/REVERSE TESTS
+/////////////////////////////////////////////////////
+describe('Stop/Pause', function () {
+  it('If looping should go to first frame after last one.', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.isLooping("idle", true);
+    for (i = 0; i !== totalFrames; i++) {
+      animator.update(1000, 1, 1);
+    }
+    expect(animator.currentAnimation.currentFrame).to.equal(0);
+  });
+  it('If not looping should stay on last frame.', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.isLooping("idle", false);
+    for (i = 0; i !== totalFrames + 2; i++) {
+      animator.update(1000, 1, 1);
+    }
+    expect(animator.currentAnimation.currentFrame).to.equal(totalFrames);
+  });
+  it('If looping and reversing should go to last frame after first.', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.isLooping("idle", true);
+    animator.isReversing("idle", true);
+    for (i = totalFrames + 2; i > 0; i--) {
+      animator.update(1000, 1, 1);
+    }
+    expect(animator.currentAnimation.currentFrame).to.equal(totalFrames);
+  });
+  it('If reversing and not looping should stay on first frame.', function () {
+    var check = false;
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.isLooping("idle", false);
+    animator.isReversing("idle", true);
+    for (i = totalFrames + 2; i > 0; i--) {
+      animator.update(1000, 1, 1);
+    }
+    expect(animator.currentAnimation.currentFrame).to.equal(0);
   });
 });

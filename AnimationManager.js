@@ -36,6 +36,10 @@ class AnimationManager {
    * Updates the current animation.
    * @param {Number} deltaTime 
    * time passed since last cycle in milliseconds
+   * @param {Number} xPos
+   * x position of the animation origin.
+   * @param {Number} yPos
+   * y position of the animation origin
    */
   update(deltaTime, xPos, yPos) {
     this.currentAnimation.update(deltaTime, xPos, yPos);
@@ -44,6 +48,7 @@ class AnimationManager {
   /**
    * Draws the current animation.
    * @param {CanvasRenderingContext2D} context
+   * the canvas context 2d to draw the animation on.
    */
   draw(context) {
     this.currentAnimation.draw(context);
@@ -89,7 +94,7 @@ class AnimationManager {
 
   /**
  * Allows checking if the current animation is playing.
- * @returns Whether the animation is playing as a boolean value.
+ * @returns {boolean} Whether the animation is playing as a boolean value.
  */
   isPlaying() {
     return this.currentAnimation.isPlaying;

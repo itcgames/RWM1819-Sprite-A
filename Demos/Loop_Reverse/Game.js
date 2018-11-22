@@ -12,17 +12,20 @@ class Game {
     this.canvas = {};
     this.ctx = {};
     this.mySprite = {};
+    this.mySprite2 = {};
     this.previousTime = 0;
 
     this.img = new Image(); //create new image element
     this.cometAnimator = new AnimationManager();
+    this.cometAnimator2 = new AnimationManager();
 
     this.cometPos = { x: 100, y: 100 };
+    this.cometRotatedPos = { x: 400, y: 100 };
     this.scaleX = 1;
     this.scaleY = 1;
+    this.currentState = true;
     this.elapsedTime = 0;
-    this.timeToPause = 1000;
-
+    this.timeToSwitch = 1000;
   }
   /**
    * game initialiser
@@ -31,9 +34,15 @@ class Game {
     this.initCanvas();
     var gameInstance = this;
     this.img.addEventListener('load', function () {
-        gameInstance.mySprite = new Animation(gameInstance.img, 266, 162, 50);
-        gameInstance.cometAnimator.addAnimation("Comet", gameInstance.mySprite);
-        gameNs.game.loop();
+      gameInstance.mySprite = new Animation(gameInstance.img, 266, 162, 50);
+      gameInstance.cometAnimator.addAnimation("Comet", gameInstance.mySprite);
+      gameInstance.cometAnimator.isLooping("Comet",false);
+
+      gameInstance.mySprite2 = new Animation(gameInstance.img, 266, 162, 50);
+      gameInstance.cometAnimator2.addAnimation("Comet"
+        , gameInstance.mySprite2);
+      gameInstance.cometAnimator2.isReversing("Comet", gameInstance.currentState);
+      gameNs.game.loop();
     });
 
     this.img.src = "Comet.png";
@@ -53,9 +62,17 @@ class Game {
 
   update() {
     var now = Date.now();
-    var deltaTime = (now - gameNs.game.previousTime);
+    var deltaTime = now - gameNs.game.previousTime;
     this.previousTime = now;
+    this.elapsedTime += deltaTime;
+    if (this.elapsedTime > this.timeToSwitch) {
+      this.currentState = !this.currentState;
+      this.cometAnimator2.isReversing("Comet", this.currentState);
+      this.elapsedTime = 0;
+    }
+
     this.cometAnimator.update(deltaTime, this.cometPos.x, this.cometPos.y);
+    this.cometAnimator2.update(deltaTime, this.cometRotatedPos.x, this.cometRotatedPos.y);
   }
 
   /**
@@ -64,6 +81,7 @@ class Game {
   draw() {
     this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     this.cometAnimator.draw(this.ctx);
+    this.cometAnimator2.draw(this.ctx);
   }
 
   /**
