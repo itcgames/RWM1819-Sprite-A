@@ -307,7 +307,7 @@ describe('Stop/Pause', function () {
 /////////////////////////////////////////////////////
 ///  LOOPING/REVERSE TESTS
 /////////////////////////////////////////////////////
-describe('Stop/Pause', function () {
+describe('Loop/Reverse', function () {
   it('If looping should go to first frame after last one.', function () {
     var check = false;
     var image = new Image();
