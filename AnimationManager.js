@@ -109,4 +109,23 @@ class AnimationManager {
   continue() {
     this.currentAnimation.isPlaying = true;
   }
+
+  /**
+   * Determine whether the animation loops or not, 
+   * true means it will loop false means it will play once only
+   * @param {string} animName 
+   * string representing the animation, name you gave the animation within
+   * the animator
+   * @param {boolean} state
+   * Boolean to represent whether the animation is looping or not
+   */
+  isLooping(animName, state) {
+    if (this.animations.has(animName)) {
+      var anim = this.animations.get(animName);
+      anim.isLooping(state);
+    } else {
+      console.log("Animation " + animName
+        + "could not be found in the animator");
+    }
+  }
 }

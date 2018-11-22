@@ -50,10 +50,10 @@ class Animation {
 
     this.image = image;
     //minus so we start at 0, let user put in the number without accounting for 0
-    this.atlasX = this.atlasX - 1; 
+    this.atlasX = this.atlasX - 1;
     this.atlasY = this.atlasY - 1;
     this.source = new AnimationRectangle((this.indexX + 1) * width
-        ,(this.indexY + 1) * height, width, height);
+      , (this.indexY + 1) * height, width, height);
     this.destination = new AnimationRectangle(100, 100, width, height);
     this.rotation = 0;
     this.sx = 0; //index * width
@@ -67,12 +67,15 @@ class Animation {
     this.scaleY = 1.0;
     //scale the rectangle to default scale
     this.destinationCurrent = new AnimationRectangle(this.destination.posX
-        , this.destination.posY
-        , this.destination.width * this.scaleX
-        , this.destination.height * this.scaleY);
+      , this.destination.posY
+      , this.destination.width * this.scaleX
+      , this.destination.height * this.scaleY);
     this.offsetX = 0;
     this.offsetY = 0;
     this.isPlaying = true;
+    this.looping = true;
+    this.finishedSingleLoop = false;
+    this.reverse = false;
   }
 
   /**
@@ -86,7 +89,8 @@ class Animation {
     this.destination.posY = yPos;
     this.tickCount += deltaTime;
     this.ticksPerFrame = 1000 / this.fps;
-    if (this.isPlaying) {
+    //Looped playing animation that is not reversing
+    if (this.isPlaying && this.isLooping && !this.reverse) {
       if (this.tickCount > this.ticksPerFrame) {
         if (this.indexX !== this.atlasX) {
           this.indexX++;
@@ -102,7 +106,40 @@ class Animation {
         }
         this.tickCount = 0;
       }
+    }else if (this.isPlaying && !this.isLooping && !this.finishedSingleLoop) {
+      if (this.tickCount > this.ticksPerFrame) {
+        if (this.indexX !== this.atlasX) {
+          this.indexX++;
+        } else if (this.indexY !== this.atlasY) {
+          this.indexY++;
+          this.indexX = 0;
+        }
+        if (this.currentFrame !== this.atlasTotal - 2) {
+          this.currentFrame++;
+        } else {
+          this.finishedSingleLoop = true;
+        }
+        this.tickCount = 0;
+      }
     }
+    else if (this.isPlaying && this.isLooping && this.reverse) {
+      if (this.tickCount > this.ticksPerFrame) {
+        if (this.indexX !== 0) {
+          this.indexX--;
+        } else if (this.indexY !== 0) {
+          this.indexY--;
+          this.indexX = this.atlasX;
+        }
+        this.currentFrame--;
+        if (this.currentFrame < 0) {
+          this.indexX = (this.atlasTotal - 1) % (this.atlasX + 1);
+          this.indexY = this.atlasY;
+          this.currentFrame = this.atlasTotal;
+        }
+        this.tickCount = 0;
+      }
+    }
+    console.log("on frame" + this.currentFrame);
     //calculates the position of the current source rectangle
     this.sx = this.indexX * this.source.width;
     this.sy = this.indexY * this.source.height;
@@ -199,5 +236,14 @@ class Animation {
 
     this.destinationCurrent.width = this.destination.width * this.scaleX;
     this.destinationCurrent.height = this.destination.height * this.scaleY;
+  }
+
+  /**
+   * Sets the looping variable to passed state 
+   * @param {boolean} state
+   * new state of the looping variable
+   */
+  isLooping(state) {
+    this.looping = state;
   }
 }
