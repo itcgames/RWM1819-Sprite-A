@@ -128,4 +128,22 @@ class AnimationManager {
         + "could not be found in the animator");
     }
   }
+
+  /**
+   * Method that allows to reverse animations.
+   * @param {string} animName
+   * string representing the animation, name you gave the animation within
+   * the animator
+   * @param {boolean} state
+   * boolean defining if the animation is reversing.
+   */
+  isReversing(animName, state) {
+    if (this.animations.has(animName)) {
+      var anim = this.animations.get(animName);
+      anim.isReversing(state);
+    } else {
+      console.log("Animation " + animName
+        + "could not be found in the animator");
+    }
+  }
 }

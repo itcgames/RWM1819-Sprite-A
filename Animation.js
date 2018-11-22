@@ -246,4 +246,13 @@ class Animation {
   isLooping(state) {
     this.looping = state;
   }
+
+  /**
+   * Sets reverse to new state
+   * @param {boolean} state
+   * new state of the reverse boolean
+   */
+  isReversing(state) {
+    this.reverse = state;
+  }
 }
