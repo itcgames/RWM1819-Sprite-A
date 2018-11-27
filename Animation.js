@@ -160,7 +160,6 @@ class Animation {
         this.tickCount = 0;
       }
     }
-    console.log("on frame" + this.currentFrame);
     //calculates the position of the current source rectangle
     this.sx = this.indexX * this.source.width;
     this.sy = this.indexY * this.source.height;
