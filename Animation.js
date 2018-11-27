@@ -280,3 +280,6 @@ class Animation {
     this.reverse = state;
   }
 }
+if (typeof module !== "undefined") {
+  module.exports = Animation;
+}

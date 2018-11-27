@@ -152,3 +152,7 @@ class AnimationManager {
     }
   }
 }
+
+if (typeof module !== "undefined") {
+  module.exports = AnimationManager;
+}
