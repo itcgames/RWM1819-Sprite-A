@@ -323,7 +323,7 @@ describe('Loop/Reverse', function () {
     }
     expect(animator.currentAnimation.currentFrame).to.equal(0);
   });
-  it('If not looping should stay on last frame.', function () {
+  it('If not looping should go to first frame and stop.', function () {
     var check = false;
     var image = new Image();
     var sourceWidth = 100;
@@ -336,7 +336,7 @@ describe('Loop/Reverse', function () {
     for (i = 0; i !== totalFrames + 2; i++) {
       animator.update(1000, 1, 1);
     }
-    expect(animator.currentAnimation.currentFrame).to.equal(totalFrames);
+    expect(animator.currentAnimation.currentFrame).to.equal(0);
   });
   it('If looping and reversing should go to last frame after first.', function () {
     var check = false;

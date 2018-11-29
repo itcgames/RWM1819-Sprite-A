@@ -113,6 +113,7 @@ class AnimationManager {
    */
   continue() {
     this.currentAnimation.isPlaying = true;
+    this.currentAnimation.finishedSingleLoop = false;
   }
 
   /**

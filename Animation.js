@@ -36,7 +36,7 @@ class Animation {
       this.atlasTotal = frameStart;
       this.initialX = 0;
       this.initialY = 0;
-      this.indexX = -1;
+      this.indexX = 0;
       this.indexY = 0;
     } else {
       if (frameEnd > this.atlasX) {
@@ -111,7 +111,7 @@ class Animation {
       }
     } else if (this.isPlaying && !this.looping && !this.finishedSingleLoop && !this.reverse) {
       if (this.tickCount > this.ticksPerFrame) {
-        if (this.indexX !== this.atlasX) {
+        if (this.indexX < this.atlasX) {
           this.indexX++;
         } else if (this.indexY !== this.atlasY) {
           this.indexY++;
@@ -120,6 +120,9 @@ class Animation {
         this.currentFrame++;
         if (this.currentFrame === this.atlasTotal) {
           this.finishedSingleLoop = true;
+          this.currentFrame = 0;
+          this.indexX = this.initialX;
+          this.indexY = this.initialY;
         }
         this.tickCount = 0;
       }
