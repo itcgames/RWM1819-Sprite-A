@@ -1,6 +1,6 @@
 
 /**
- * @class Game
+ * @class
  * @classdesc This class will control the game
  */
 class Game {
@@ -12,20 +12,18 @@ class Game {
     this.canvas = {};
     this.ctx = {};
     this.mySprite = {};
-    this.mySprite2 = {};
+    this.mySpriteFast = {};
     this.previousTime = 0;
 
     this.img = new Image(); //create new image element
     this.cometAnimator = new AnimationManager();
-    this.cometAnimator2 = new AnimationManager();
+    this.cometFastAnimator = new AnimationManager();
 
     this.cometPos = { x: 100, y: 100 };
-    this.cometRotatedPos = { x: 400, y: 100 };
+    this.cometFastPos = { x: 400, y: 100 };
     this.scaleX = 1;
     this.scaleY = 1;
-    this.currentState = true;
-    this.elapsedTime = 0;
-    this.timeToSwitch = 1000;
+
   }
   /**
    * game initialiser
@@ -36,12 +34,11 @@ class Game {
     this.img.addEventListener('load', function () {
       gameInstance.mySprite = new Animation(gameInstance.img, 266, 162, 50);
       gameInstance.cometAnimator.addAnimation("Comet", gameInstance.mySprite);
-      gameInstance.cometAnimator.isLooping("Comet",true);
+      gameInstance.cometAnimator.setAnimationFPS("Comet", 60);
 
-      gameInstance.mySprite2 = new Animation(gameInstance.img, 266, 162, 50);
-      gameInstance.cometAnimator2.addAnimation("Comet"
-        , gameInstance.mySprite2);
-      gameInstance.cometAnimator2.isReversing("Comet", gameInstance.currentState);
+      gameInstance.mySpriteFast = new Animation(gameInstance.img, 266, 162, 50);
+      gameInstance.cometFastAnimator.addAnimation("Comet", gameInstance.mySpriteFast);
+      gameInstance.cometFastAnimator.setAnimationFPS("Comet", 120)
       gameNs.game.loop();
     });
 
@@ -62,17 +59,10 @@ class Game {
 
   update() {
     var now = Date.now();
-    var deltaTime = now - gameNs.game.previousTime;
+    var deltaTime = (now - gameNs.game.previousTime);
     this.previousTime = now;
-    this.elapsedTime += deltaTime;
-    if (this.elapsedTime > this.timeToSwitch) {
-      this.currentState = !this.currentState;
-      this.cometAnimator2.isReversing("Comet", this.currentState);
-      this.elapsedTime = 0;
-    }
-
     this.cometAnimator.update(deltaTime, this.cometPos.x, this.cometPos.y);
-    this.cometAnimator2.update(deltaTime, this.cometRotatedPos.x, this.cometRotatedPos.y);
+    this.cometFastAnimator.update(deltaTime, this.cometFastPos.x, this.cometFastPos.y);
   }
 
   /**
@@ -81,7 +71,7 @@ class Game {
   draw() {
     this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     this.cometAnimator.draw(this.ctx);
-    this.cometAnimator2.draw(this.ctx);
+    this.cometFastAnimator.draw(this.ctx);
   }
 
   /**

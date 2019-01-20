@@ -282,6 +282,20 @@ class Animation {
   isReversing(state) {
     this.reverse = state;
   }
+
+  /**
+   * Setter for the fps of the animation.
+   * @param {Number} newFPS 
+   * new value for the fps
+   * default is 60.
+   */
+  setAnimFPS(newFPS) {
+    //prevent negative numbers and other invalid data
+    if (newFPS > 0 && newFPS && typeof newFPS === 'number') {
+      this.fps = newFPS;
+    }
+  }
+  
 }
 if (typeof module !== "undefined") {
   module.exports = Animation;

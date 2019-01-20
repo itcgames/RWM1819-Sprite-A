@@ -88,6 +88,15 @@ describe('Function', function () {
       var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
       expect(animation.isReversing).to.be.a('function');
     });
+    it('setAnimFPS function exists', function () {
+      var image = new Image();
+      var sourceWidth = 100;
+      var sourceHeight = 100;
+      var totalFrames = 5;
+
+      var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+      expect(animation.setAnimFPS).to.be.a('function');
+    });
   });
   /////////////////////////////////////////////////////
   ///  ANIMATION MANAGER
@@ -132,6 +141,10 @@ describe('Function', function () {
     it('isReversing function exists', function () {
       var animator = new AnimationManager();
       expect(animator.isReversing).to.be.a('function');
+    });
+    it('isReversing function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.setAnimationFPS).to.be.a('function');
     });
   });
 });
@@ -369,5 +382,74 @@ describe('Loop/Reverse', function () {
       animator.update(1000, 1, 1);
     }
     expect(animator.currentAnimation.currentFrame).to.equal(0);
+  });
+});
+
+/////////////////////////////////////////////////////
+///  LOOPING/REVERSE TESTS
+/////////////////////////////////////////////////////
+describe('Slow down/Speed up', function () {
+  it('Set animation FPS method should change the fps property of the animation.', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.setAnimationFPS("idle", 120);
+    expect(animation.fps).to.equal(120);
+  });
+
+  it('An animation with 4 frames and 2fps should finish no earlier than 2 seconds.', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 4;
+    var dt = 200;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.setAnimationFPS("idle", 2);
+    //set animation to not loop to check the finished flag
+    animator.isLooping("idle", false);
+    //10 loops since 200ms * 10 = 2seconds
+    for (i = 0; i <= 10; i++) {
+      animator.update(dt, 1, 1);
+      if (i === 6) {
+        //check its not finished early (current frame starts at 0)
+        expect(animation.currentFrame).to.equal(2);
+      }
+      if (i === 10) {
+        //check animation is on last frame at 10th update
+        expect(animation.currentFrame).to.equal(3);
+      }
+    }
+  });
+
+  it('Ensure fps stays the same if negative is passed in.', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.setAnimationFPS("idle", -120);
+    //if negative fps does not change
+    expect(animation.fps).to.equal(60);
+  });
+
+  it('Ensure fps stays the same if NaN is passed in.', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.setAnimationFPS("idle", 'not a number');
+    //if not a number fps does not change
+    expect(animation.fps).to.equal(60);
   });
 });

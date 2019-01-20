@@ -152,6 +152,17 @@ class AnimationManager {
         + "could not be found in the animator");
     }
   }
+
+  setAnimationFPS(animName, newFPS) {
+    if (this.animations.has(animName)) {
+      var anim = this.animations.get(animName);
+      anim.setAnimFPS(newFPS);
+    } else {
+      console.log("Animation " + animName
+          + "could not be found in the animator");
+    }
+  }
+
 }
 
 if (typeof module !== "undefined") {
