@@ -79,6 +79,7 @@ class Animation {
     //Needed for a specific case of reversing a non looping animation
     //and wanting it to loop from the end
     this.firstUpdate = true;
+    this.finishedCurrentLoop = false;
   }
 
   /**
@@ -167,6 +168,16 @@ class Animation {
     this.sx = this.indexX * this.source.width;
     this.sy = this.indexY * this.source.height;
     this.firstUpdate = false;
+
+    if(this.currentFrame === this.atlasTotal - 1 && !this.reverse){
+      this.finishedCurrentLoop = true;
+    }
+    else if(this.currentFrame === 0 && this.reverse){
+      this.finishedCurrentLoop = true;
+    }
+    else{
+      this.finishedCurrentLoop = false;
+    }
   }
 
   /**
@@ -294,6 +305,27 @@ class Animation {
     if (newFPS > 0 && newFPS && typeof newFPS === 'number') {
       this.fps = newFPS;
     }
+  }
+
+  /**
+   * Getter for whether current loop is finished or not.
+   * Finished defines last frame of the animation cycle.
+   * @returns {Boolean}
+   * boolean specifying if animation is finished its cycle.
+   */
+  isFinished(){
+    return this.finishedCurrentLoop;
+  }
+
+  /**
+   * this function resets animation to its initial state.
+   */
+  reset() {
+    this.currentFrame = 0;
+    this.indexX = this.initialX;
+    this.indexY = this.initialY;
+    this.finishedCurrentLoop = false;
+
   }
   
 }

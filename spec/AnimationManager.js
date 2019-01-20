@@ -97,6 +97,24 @@ describe('Function', function () {
       var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
       expect(animation.setAnimFPS).to.be.a('function');
     });
+    it('isFinished function exists', function () {
+      var image = new Image();
+      var sourceWidth = 100;
+      var sourceHeight = 100;
+      var totalFrames = 5;
+
+      var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+      expect(animation.isFinished).to.be.a('function');
+    });
+    it('reset function exists', function () {
+      var image = new Image();
+      var sourceWidth = 100;
+      var sourceHeight = 100;
+      var totalFrames = 5;
+
+      var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+      expect(animation.reset).to.be.a('function');
+    });
   });
   /////////////////////////////////////////////////////
   ///  ANIMATION MANAGER
@@ -142,9 +160,29 @@ describe('Function', function () {
       var animator = new AnimationManager();
       expect(animator.isReversing).to.be.a('function');
     });
-    it('isReversing function exists', function () {
+    it('setAnimationFPS function exists', function () {
       var animator = new AnimationManager();
       expect(animator.setAnimationFPS).to.be.a('function');
+    });
+    it('isAnimationFinished function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.isAnimationFinished).to.be.a('function');
+    });
+    it('changeTo function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.changeTo).to.be.a('function');
+    });
+    it('addToQueue function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.addToQueue).to.be.a('function');
+    });
+    it('clearQueue function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.clearQueue).to.be.a('function');
+    });
+    it('playQueue function exists', function () {
+      var animator = new AnimationManager();
+      expect(animator.playQueue).to.be.a('function');
     });
   });
 });
@@ -386,7 +424,7 @@ describe('Loop/Reverse', function () {
 });
 
 /////////////////////////////////////////////////////
-///  LOOPING/REVERSE TESTS
+///  SLOWING DOWN/SPEEDING UP TESTS
 /////////////////////////////////////////////////////
 describe('Slow down/Speed up', function () {
   it('Set animation FPS method should change the fps property of the animation.', function () {
@@ -427,7 +465,7 @@ describe('Slow down/Speed up', function () {
     }
   });
 
-  it('Ensure fps stays the same if negative is passed in.', function () {
+  it('FPS stays the same if negative is passed in.', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -440,7 +478,7 @@ describe('Slow down/Speed up', function () {
     expect(animation.fps).to.equal(60);
   });
 
-  it('Ensure fps stays the same if NaN is passed in.', function () {
+  it('FPS stays the same if NaN is passed in.', function () {
     var image = new Image();
     var sourceWidth = 100;
     var sourceHeight = 100;
@@ -451,5 +489,109 @@ describe('Slow down/Speed up', function () {
     animator.setAnimationFPS("idle", 'not a number');
     //if not a number fps does not change
     expect(animation.fps).to.equal(60);
+  });
+});
+
+/////////////////////////////////////////////////////
+///  CHANGING ANIMATION TESTS
+/////////////////////////////////////////////////////
+describe('Changing Animation', function () {
+  it('Can change to another animation', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animation2 = new Animation(image, sourceWidth, sourceHeight, 10);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.addAnimation("running", animation);
+    //currently animation of the animator is the last added so running, switch to idle.
+    animator.changeTo("idle");
+    //check if current animation is idle by checking if frames are 5
+    expect(animator.currentAnimation.atlasTotal).to.equal(5);
+
+  });
+
+  it('isAnimationFinished returns true at the last frame', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 6;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    expect(animator.isAnimationFinished()).to.equal(false);
+    //although there are 6 frames the count starts at 0, 6-1 = 5
+    for (i = 0; i < 5; i++) {
+      animator.update(1000, 1, 1);
+
+    }
+    //check if the isAnimationFinished method returns at last frame.
+    expect(animator.isAnimationFinished()).to.equal(true);
+  });
+});
+
+/////////////////////////////////////////////////////
+///  QUEUING ANIMATIONS TESTS
+/////////////////////////////////////////////////////
+describe('Queuing Animations', function () {
+  it('Able to add animations to the queue', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animation2 = new Animation(image, sourceWidth, sourceHeight, 10);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.addAnimation("running", animation2);
+    animator.addToQueue("idle");
+    animator.addToQueue("running");
+    //check if animation queue has the 2 animations
+    expect(animator.animQueue.length).to.equal(2);
+  });
+
+  it('Current animation is not switched if animation queue is empty', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animation2 = new Animation(image, sourceWidth, sourceHeight, 10);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    animator.addAnimation("running", animation2);
+    //currently animation of the animator is the last added so running, switch to idle.
+
+    animator.playQueue();
+    for (i = 0; i < 15; i++) {
+      animator.update(1000, 1, 1);
+    }
+    //check if still updating the running animation by checking frame amount
+    expect(animator.currentAnimation.atlasTotal).to.equal(10);
+  });
+
+  it('Reset method for animation properly resets the animation', function () {
+    var image = new Image();
+    var sourceWidth = 100;
+    var sourceHeight = 100;
+    var totalFrames = 5;
+    var animation = new Animation(image, sourceWidth, sourceHeight, totalFrames);
+    var animator = new AnimationManager();
+    animator.addAnimation("idle", animation);
+    //currently animation of the animator is the last added so running, switch to idle.
+
+    animator.playQueue();
+    for (i = 0; i < 15; i++) {
+      animator.update(1000, 1, 1);
+    }
+    animator.currentAnimation.reset();
+    //check if still updating the running animation by checking frame amount
+    expect(animator.currentAnimation.currentFrame).to.equal(0);
+    expect(animator.currentAnimation.indexX).to.equal(0);
+    expect(animator.currentAnimation.indexY).to.equal(0);
+    expect(animator.currentAnimation.finishedCurrentLoop).to.equal(false);
+
   });
 });

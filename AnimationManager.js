@@ -13,6 +13,11 @@ class AnimationManager {
     * @type {Animation}
     */
     this.currentAnimation;
+
+    this.animQueue = [];
+    this.playingQueue = false;
+    this.currentQueuePos = 0;
+    this.animQueueLooping = false;
   }
    
   /**
@@ -42,6 +47,24 @@ class AnimationManager {
    * y position of the animation origin
    */
   update(deltaTime, xPos, yPos) {
+
+    if (this.playingQueue) {
+      if (this.currentAnimation.isFinished()) {
+        this.currentQueuePos += 1;
+        if (this.currentQueuePos >= this.animQueue.length
+            && this.animQueueLooping) {
+          this.currentQueuePos = 0;
+        }
+        else if (this.currentQueuePos >= this.animQueue.length
+            && !this.animQueueLooping) {
+          this.playingQueue = false;
+        }
+        this.changeTo(this.animQueue[this.currentQueuePos], true);
+        this.currentAnimation.reset();
+      }
+    }
+
+
     this.currentAnimation.update(deltaTime, xPos, yPos);
   }
 
@@ -137,10 +160,10 @@ class AnimationManager {
 
   /**
    * Method that allows to reverse animations.
-   * @param {string} animName
+   * @param {String} animName
    * string representing the animation, name you gave the animation within
    * the animator
-   * @param {boolean} state
+   * @param {Boolean} state
    * boolean defining if the animation is reversing.
    */
   isReversing(animName, state) {
@@ -153,6 +176,14 @@ class AnimationManager {
     }
   }
 
+  /**
+   * sets the specified animations frames per second.
+   * Default value being 60 fps.
+   * @param {String} animName 
+   * String representing animation name within the animator.
+   * @param {Number} newFPS 
+   * Number representing new value of the animation fps.
+   */
   setAnimationFPS(animName, newFPS) {
     if (this.animations.has(animName)) {
       var anim = this.animations.get(animName);
@@ -163,6 +194,79 @@ class AnimationManager {
     }
   }
 
+  /**
+   * A check for whether the animation is finished its current cycle.
+   * @returns {Boolean}
+   * Boolean that specifies if the animation is on its last frame.
+   */
+  isAnimationFinished(){
+      return this.currentAnimation.isFinished();
+  }
+
+  /**
+   * This method changes the current animation to specified animation.
+   * @param {String} nextAnimation 
+   * String representing animation to change to.
+   * @param {Boolean} queuePlaying
+   * a boolean to represent if animation queue is playing
+   * defaults to false if not provided
+   */
+  changeTo(nextAnimation, queuePlaying) {
+    if (queuePlaying === undefined) {
+      queuePlaying = false;
+    }
+    if (this.animations.has(nextAnimation)) {
+      if (this.playingQueue) {
+        this.playingQueue = queuePlaying;
+      }
+      this.currentAnimation = this.animations.get(nextAnimation);
+    } else {
+      console.log("Animation " + nextAnimation
+          + "could not be found in the animator");
+    }
+  }
+
+  /**
+   * Adds specified animation to the queue.
+   * The animation must already be in the animator.
+   * @param {String} animName
+   * name of the animation to add to the queue.
+   */
+  addToQueue(animName) {
+    if (this.animations.has(animName)) {
+      this.animQueue.push(animName);
+    } else {
+      console.log("Animation " + animName
+        + "could not be found in the animator");
+    }
+  }
+
+  /**
+   * This method clears the animation queue
+   * preparing it for a new set of animations.
+   */
+  clearQueue() {
+    this.animQueue = [];
+  }
+
+  /**
+   * This is the method that starts the queue. 
+   * method will check that queue is not empty,
+   * it will then set the current animation to first in queue
+   * @param {Boolean} looping
+   * Flag for whether the queue is to loop,
+   * true by default
+   */
+  playQueue(looping) {
+    if (looping === undefined) {
+      looping = true;
+    }
+    this.animQueueLooping = looping;
+    if (this.animQueue.length > 0) {
+      this.playingQueue = true;
+      this.currentAnimation = this.animations.get(this.animQueue[0]);
+    }
+  }
 }
 
 if (typeof module !== "undefined") {
