@@ -120,7 +120,10 @@ class AnimationManager {
  * @returns {boolean} Whether the animation is playing as a boolean value.
  */
   isPlaying() {
-    return this.currentAnimation.isPlaying;
+    if(this.currentAnimation !== undefined){
+      return this.currentAnimation.isPlaying;
+    }
+    return false;
   }
 
   /**

@@ -121,6 +121,7 @@ class Animation {
         this.currentFrame++;
         if (this.currentFrame === this.atlasTotal) {
           this.finishedSingleLoop = true;
+          this.isPlaying = false;
           this.currentFrame = 0;
           this.indexX = this.initialX;
           this.indexY = this.initialY;
